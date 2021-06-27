@@ -1,0 +1,5 @@
+dist
+node_modules
+.tmp
+*.statistics.*.html
+.idea/

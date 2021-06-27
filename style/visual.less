@@ -1,0 +1,119 @@
+@colorGray: #67625E;
+@colorBlack: #2D2725;
+@colorBlue: #0078D7;
+@colorWhite: white;
+
+@font-face {
+    font-family:'Glyphicons Halflings';
+    src:url(fonts/glyphicons-halflings-regular.ttf) format('truetype');
+}
+
+.glyphicon {
+    position:relative;top:1px;
+    display:inline-block;
+    font-family:'Glyphicons Halflings';
+    font-style:normal;
+    font-weight:400;
+    line-height:1;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale
+}
+
+.glyphicon-chevron-up:before{content:"\e113"}
+
+.glyphicon-chevron-down:before{content:"\e114"}
+
+.calendar-container {
+    padding: 10px;
+    background-color: @colorBlack;
+    display: inline-grid;
+    font-family: Arial, sans-serif;
+}
+
+.calendar {
+    max-height: border-box;
+    width: 280px;
+    color: @colorWhite;
+    background-color: @colorBlack;
+}
+
+.calendar-grid {
+    overflow: hidden;
+    max-height: 240px;
+    user-select: none;
+}
+
+.dayGrid {
+    display: inline-block;
+    min-width: 40px;
+    min-height: 40px;
+    line-height: 40px;
+    text-align: center;
+    vertical-align: middle;
+    align-items: center;
+    cursor: pointer;
+}
+
+.dayGrid:hover {
+    transform: scale(1.1);
+    transition: all 0.4s;
+}
+
+.week {
+    margin: 0 auto;
+    user-select: none;
+    span {
+        float: left; /*Задаем обтекание*/
+        line-height: 40px;/*Высота строки +  верт. центрирования текста*/
+        width: 40px; /*Фиксируем ширину блока*/
+        text-align: center; /*Центрируем текст по горизонтали*/
+        color: @colorWhite;
+    }
+    :last-child {
+        margin-right: 0;
+    }
+}
+
+.currentDay {
+    background-color: @colorBlue;
+}
+
+.currentDateText {
+    display: inline;
+    float: left;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+ }
+
+.nav-month {
+    display: block;
+    text-align: right;
+    span {
+        margin: 5px;
+        color: @colorWhite;
+        cursor: pointer;
+    }
+    span:hover {
+        transform: scale(1.1);
+        transition: all 0.4s;
+    }
+}
+
+.nav-panel {
+    max-width: 280px;
+    background-color: @colorBlack;
+    user-select: none;
+}
+
+.dayAnotherMonth {
+    color: @colorGray;
+}
+
+div[selected] {
+    background-color: @colorGray;
+}
+div.dayAnotherMonth[dayAnotherMonth][selected] {
+    background-color: @colorGray;
+    color: aliceblue;
+}
