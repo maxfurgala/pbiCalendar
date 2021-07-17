@@ -15,10 +15,11 @@ import * as d3 from "d3";
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 
 import { VisualSettings } from "./settings";
+import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 export class Visual implements IVisual {
     private hostService: IVisualHost;
     private root: Selection<HTMLElement>;
-    private settings: VisualSettings;
+    private visualSettings: VisualSettings;
     private weekDays: string[];
     private customDate: Date;
     private currentDateText: any;
@@ -30,56 +31,61 @@ export class Visual implements IVisual {
         if(document)
         {
             this.hostService = options.host;
-            this.weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-            this.customDate = new Date();
-            this.root = d3.select(options.element);
 
-            this.root.append('div').classed('calendar-container', true)
-                .append('div').classed('nav-panel', true)
-                .append('div').classed('nav-month', true);
-
-            this.currentDateText = d3.select('div.nav-month').append('div').classed('currentDateText', true);
-            d3.select('div.nav-month')
-                .append('span')
-                .attr('class', 'prev-month glyphicon glyphicon-chevron-up');
-
-            d3.select('div.nav-month')
-                .append('span')
-                .attr('class', 'next-month glyphicon glyphicon-chevron-down');
-
-            d3.select('div.calendar-container')
-                .append('div')
-                .classed('week', true);
-
-            d3.select('div.calendar-container')
-                .append('div')
-                .classed('calendar', true)
-                .append('div')
-                .classed('calendar-grid', true);
-
-            this.calendarGrid = d3.select('div.calendar').append('div').classed('calendar-grid', true);
-
-            this.weekDays.forEach((item) => {
-                d3.select('div.week').append('span').text(item);
-            });
+            this.initCalendar(options);
 
             this.buildVisualCalendar(options, new Date());
-
-            d3.select('span.prev-month').on('click', () => {
-                this.customDate.setMonth(this.customDate.getMonth() - 1);
-                this.buildVisualCalendar(options, this.customDate);
-            });
-
-            d3.select('span.next-month').on('click', () => {
-                this.customDate.setMonth(this.customDate.getMonth() + 1);
-                this.buildVisualCalendar(options, this.customDate);
-            });
 
         }
     }
 
+    public initCalendar(options: VisualConstructorOptions):void {
+        this.weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+        this.customDate = new Date();
+        this.root = d3.select(options.element);
+
+        this.root.append('div').classed('calendar-container', true)
+            .append('div').classed('nav-panel', true)
+            .append('div').classed('nav-month', true);
+
+        this.currentDateText = d3.select('div.nav-month').append('div').classed('currentDateText', true);
+        d3.select('div.nav-month')
+            .append('span')
+            .attr('class', 'prev-month glyphicon glyphicon-chevron-up');
+
+        d3.select('div.nav-month')
+            .append('span')
+            .attr('class', 'next-month glyphicon glyphicon-chevron-down');
+
+        d3.select('div.calendar-container')
+            .append('div')
+            .classed('week', true);
+
+        d3.select('div.calendar-container')
+            .append('div')
+            .classed('calendar', true)
+            .append('div')
+            .classed('calendar-grid', true);
+
+        this.calendarGrid = d3.select('div.calendar').append('div').classed('calendar-grid', true);
+
+        this.weekDays.forEach((item) => {
+            d3.select('div.week').append('span').text(item);
+        });
+
+        d3.select('span.prev-month').on('click', () => {
+            this.customDate.setMonth(this.customDate.getMonth() - 1);
+            this.buildVisualCalendar(options, this.customDate);
+        });
+
+        d3.select('span.next-month').on('click', () => {
+            this.customDate.setMonth(this.customDate.getMonth() + 1);
+            this.buildVisualCalendar(options, this.customDate);
+        });
+    }
+
     public buildVisualCalendar(options: VisualConstructorOptions, date: Date):void {
-        debugger;
+        //debugger;
         let daysArray: any = [];
         let countDays = this.daysInMonthCalculate(date);
         let firstDayInMonth = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
@@ -129,8 +135,27 @@ export class Visual implements IVisual {
 
     }
 
+    public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
+        const settings: VisualSettings = this.visualSettings || <VisualSettings>VisualSettings.getDefault();
+        return VisualSettings.enumerateObjectInstances(settings, options);
+    }
+
     public update(options: VisualUpdateOptions) {
-        //this.buildVisual();
+        try {
+            if (options && options.dataViews && options.dataViews[0] && options.dataViews[0].categorical)
+            {
+                this.visualSettings = VisualSettings.parse<VisualSettings>(options.dataViews[0]);
+                d3.select('div.calendar').style("background-color", this.visualSettings.calendar.calendarColor);
+                d3.select('div.currentDay').style("background-color", this.visualSettings.calendar.currentDayColor);
+            }
+        }
+        catch (e) {
+            console.log("Exception: ", e);
+        }
+    }
+
+    private static parseSettings(dataView: DataView): VisualSettings {
+        return <VisualSettings>VisualSettings.parse(dataView);
     }
 
     public calendarDayCreate(date: Date, currentMonth: boolean): Selection<HTMLDivElement> {

@@ -56,6 +56,33 @@
                     }
                 }
             }
+        },
+        "calendar": {
+            "displayName": "Calendar",
+            "properties": {
+                "calendarColor": {
+                    "displayName": "Background",
+                    "description": "CalendarColor",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "currentDayColor": {
+                    "displayName": "Color for current day",
+                    "description": "ColorCurrentDay",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "dataViewMappings": [
